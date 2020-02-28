@@ -20,18 +20,11 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!--<junit.version>4.11</junit.version>-->
     <selenium.version>3.11.0</selenium.version>
     <testng.version>7.1.0</testng.version>
   </properties>
 
   <dependencies>
-    <!--<dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>-->
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
