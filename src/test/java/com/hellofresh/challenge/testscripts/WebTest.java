@@ -1,4 +1,4 @@
-package com.hellofresh.challenge;
+package com.hellofresh.challenge.testscripts;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -14,7 +14,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 
-public class WebTest {
+public class WebTest extends BaseTest{
   WebDriver driver;
   WebDriverWait wait;
 
@@ -100,16 +100,16 @@ public class WebTest {
     driver.findElement(By.xpath("//a[@title='Faded Short Sleeve T-shirts']/ancestor::li")).click();
     wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("Submit"))).click();
     wait.until(ExpectedConditions.visibilityOfElementLocated(
-        By.xpath("//*[@id='layer_cart']//a[@class and @title='Proceed to checkout']"))).click();
+        By.xpath("/[@id='layer_cart']//a[@class and @title='Proceed to checkout']"))).click();
     wait.until(ExpectedConditions.visibilityOfElementLocated(
-        By.xpath("//*[contains(@class,'cart_navigation')]/a[@title='Proceed to checkout']")))
+        By.xpath("/[contains(@class,'cart_navigation')]/a[@title='Proceed to checkout']")))
         .click();
     wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("processAddress"))).click();
     wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("uniform-cgv"))).click();
     driver.findElement(By.name("processCarrier")).click();
     wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("bankwire"))).click();
     wait.until(ExpectedConditions
-        .visibilityOfElementLocated(By.xpath("//*[@id='cart_navigation']/button"))).click();
+        .visibilityOfElementLocated(By.xpath("/[@id='cart_navigation']/button"))).click();
     WebElement heading =
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("h1")));
 
@@ -118,7 +118,7 @@ public class WebTest {
         driver.findElement(By.xpath("//li[@class='step_done step_done_last four']")).isDisplayed());
     assertTrue(driver.findElement(By.xpath("//li[@id='step_end' and @class='step_current last']"))
         .isDisplayed());
-    assertTrue(driver.findElement(By.xpath("//*[@class='cheque-indent']/strong")).getText()
+    assertTrue(driver.findElement(By.xpath("/[@class='cheque-indent']/strong")).getText()
         .contains("Your order on My Store is complete."));
     assertTrue(driver.getCurrentUrl().contains("controller=order-confirmation"));
   }

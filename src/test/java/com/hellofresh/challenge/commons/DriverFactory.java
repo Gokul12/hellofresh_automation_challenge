@@ -27,10 +27,10 @@ public class DriverFactory {
       } else if (osName.toUpperCase().trim().contains(Platform.LINUX.name())) {
         System.setProperty(CHROME_DRIVER_SYS_PROP, WEB_DRIVER_PATH + Platform.LINUX.name());
       } else {
-        //TODO log
+        LoggerClass.logError(browserName + " is not a supported browser");
       }
     } else if (browserName.equalsIgnoreCase(Browser.FIREFOX.name())) {
-       webDriver = new FirefoxDriver();
+      webDriver = new FirefoxDriver();
     }
     return webDriver;
   }
