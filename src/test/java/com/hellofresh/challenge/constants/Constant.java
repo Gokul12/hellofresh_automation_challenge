@@ -1,6 +1,7 @@
 package com.hellofresh.challenge.constants;
 
 
+import com.hellofresh.challenge.commons.TestListener;
 import com.hellofresh.challenge.enums.Platform;
 import java.io.File;
 
@@ -69,6 +70,12 @@ public final class Constant {
    * Locator constants
    */
   public static final String LOCATORS_FILE_PATH = RESOURCES_PATH + "locators.properties";
+
+  /**
+   * Screenshot constants
+   */
+  public static final String SCREENSHOT_BASE_PATH = RESOURCES_PATH + "screenshots" + File.separator;
+  public static final String PNG_EXTENSION = ".png";
 
 
 }

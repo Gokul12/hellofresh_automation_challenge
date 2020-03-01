@@ -1,9 +1,11 @@
 package com.hellofresh.challenge.testscripts;
 
 import com.hellofresh.challenge.commons.TestHelper;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import org.testng.annotations.Test;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
 
 
 public class WebTest extends BaseTest {
@@ -38,9 +40,10 @@ public class WebTest extends BaseTest {
     th.getActions().type("PhoneMobile", "12345123123");
     th.getActions().type("Alias", "hf");
     th.getActions().click("SubmitAccount");
-
-    assertSignIn(th, name + " " + surname);
+    th.getActions().takeScreenshot("signInTest");
+    boolean status = assertSignIn(th, name + " " + surname);
     tearDown(th);
+    assertFalse(status);
   }
 
   @Test
@@ -48,8 +51,10 @@ public class WebTest extends BaseTest {
     TestHelper th = getTestObject();
     String fullName = "Joe Black";
     signIn(th);
-    assertSignIn(th, fullName);
+    th.getActions().takeScreenshot("logInTest");
+    boolean status = assertSignIn(th, fullName);
     tearDown(th);
+    assertFalse(status);
   }
 
   @Test
@@ -59,6 +64,7 @@ public class WebTest extends BaseTest {
     th.getActions().click("Women");
     th.getActions().click("DressName", "Faded Short Sleeve T-shirts");
     th.getActions().click("DressName", "Faded Short Sleeve T-shirts");
+    th.getActions().clickIfPresent("ClosePopUp");
     th.getActions().clickIfPresent("Submit");
     th.getActions().clickIfPresent("LayerCart");
     th.getActions().click("CartNavigationCheckout");
@@ -67,14 +73,17 @@ public class WebTest extends BaseTest {
     th.getActions().click("ProcessCarrier");
     th.getActions().click("BankWire");
     th.getActions().click("CartNavigation");
+    th.getActions().takeScreenshot("checkoutTest");
 
-    assertHeader(th, "ORDER CONFIRMATION");
-    assertTrue(th.getActions().isDisplayed("Shipping"));
-    assertTrue(th.getActions().isDisplayed("Payment"));
-    assertTrue(
+    List<Boolean> status = new ArrayList<>();
+    status.add(assertHeader(th, "ORDER CONFIRMATION"));
+    status.add(th.getActions().isDisplayed("Shipping"));
+    status.add(th.getActions().isDisplayed("Payment"));
+    status.add(
         th.getActions().assertContains("OrderComplete", "Your order on My Store is complete."));
-    assertTrue(assertURL(th, "controller=order-confirmation"));
+    status.add(assertURL(th, "controller=order-confirmation"));
     tearDown(th);
+    assertFalse(status.contains(false));
   }
 
   private void signIn(TestHelper th) {
@@ -84,16 +93,18 @@ public class WebTest extends BaseTest {
     th.getActions().click("SubmitLogin");
   }
 
-  private void assertSignIn(TestHelper th, String name) {
-    assertHeader(th, "MY ACCOUNT");
-    th.getActions().assertEquals("Account", name);
-    assertTrue(th.getActions().assertContains("AccountInfo", "Welcome to your account."));
-    assertTrue(th.getActions().isDisplayed("Logout"));
-    assertTrue(assertURL(th, "controller=my-account"));
+  private boolean assertSignIn(TestHelper th, String name) {
+    List<Boolean> status = new ArrayList<>();
+    status.add(assertHeader(th, "MY ACCOUNT"));
+    status.add(th.getActions().assertEquals("Account", name));
+    status.add(th.getActions().assertContains("AccountInfo", "Welcome to your account."));
+    status.add((th.getActions().isDisplayed("Logout")));
+    status.add(assertURL(th, "controller=my-account"));
+    return status.contains(false);
   }
 
-  private void assertHeader(TestHelper th, String header) {
-    th.getActions().assertEquals("RegisterHeading", header);
+  private boolean assertHeader(TestHelper th, String header) {
+    return th.getActions().assertEquals("RegisterHeading", header);
   }
 
   private boolean assertURL(TestHelper th, String url) {

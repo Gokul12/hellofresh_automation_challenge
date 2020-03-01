@@ -28,9 +28,6 @@ public abstract class Report {
   private int passCount;
   private int failCount;
   private int skipCount;
-  private SuiteProperties suiteProperties = TestListener.SUITE_PROPERTIES;
-  //TODO
-  private int passInRerun;
   private long totalDurationInSeconds;
   private long startTime;
   private String templateFile;
@@ -42,29 +39,23 @@ public abstract class Report {
 
   Report(String templateFile) {
     this.templateFile = templateFile;
-
     try {
-
-      String browser = suiteProperties.getBrowser();
-      String environment = suiteProperties.getEnvironment();
-
+      SuiteProperties suiteProperties = TestListener.SUITE_PROPERTIES;
+      String browser = suiteProperties.getBrowser().toUpperCase();
+      String environment = suiteProperties.getEnvironment().toUpperCase();
       commonAttrs = new HashMap<>();
       totalDurationInSeconds = 0;
       commonAttrs.put("OS Version", System.getProperty("os.name"));
-      commonAttrs.put("SUITE NAME", "Sanity");
+      commonAttrs.put("SUITE NAME", "SANITY");
       commonAttrs.put("PASS COUNT", "0");
       commonAttrs.put("FAIL COUNT", "0");
       commonAttrs.put("PASS WITH WARNINGS COUNT", "0");
-      //TODO later
-      commonAttrs.put("PASS IN RERUN COUNT", "0");
       commonAttrs.put("SKIP COUNT", "0");
       commonAttrs.put("TOTAL COUNT", "0");
       commonAttrs.put("DURATION_IN_MINS", "0");
       commonAttrs.put("ENVIRONMENT", environment);
       commonAttrs.put("BROWSER", browser);
-      //TODO get chrome version
       startTime = System.currentTimeMillis();
-
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       docBuilder = dbf.newDocumentBuilder();
       doc = docBuilder.parse(this.templateFile);
@@ -95,7 +86,6 @@ public abstract class Report {
           }
         }
       }
-      // write the content into xml file
       copyContent();
 
     } catch (Exception e) {
@@ -109,13 +99,11 @@ public abstract class Report {
     }
   }
 
-
   private void updateCount(String category) {
     int currentCount = Integer.parseInt(commonAttrs.get(category));
     updateSummaryItem(category, String.valueOf(currentCount + 1));
     commonAttrs.put(category, String.valueOf(currentCount + 1));
   }
-
 
   private void updateSummaryItem(String key, String value) {
     XPath xPath = XPathFactory.newInstance().newXPath();
@@ -123,27 +111,20 @@ public abstract class Report {
     NodeList nodeList;
     try {
       nodeList = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
-
       for (int i = 0; i < nodeList.getLength(); i++) {
-
         if (nodeList.item(i).getTextContent().equalsIgnoreCase(key)) {
-
           Node node = nodeList.item(i).getNextSibling();
           while (!"td".equalsIgnoreCase(node.getNodeName())) {
             node = node.getNextSibling();
           }
-
           node.setTextContent(value);
         }
       }
-
       copyContent();
-
     } catch (Exception e) {
       LoggerClass.log(e);
     }
   }
-
 
   synchronized void updateTestStatus(TestResult testResult) {
     updateCount("TOTAL COUNT");
@@ -160,9 +141,6 @@ public abstract class Report {
       skipCount++;
       updateCount("SKIP COUNT");
     }
-    //TODO add pass in re run
-
-
     totalDurationInSeconds = (System.currentTimeMillis() - startTime) / 1000;
     String totalTime =
         String.valueOf(totalDurationInSeconds / 60) + ":" + totalDurationInSeconds % 60;
@@ -191,5 +169,4 @@ public abstract class Report {
       LoggerClass.log(e);
     }
   }
-
 }

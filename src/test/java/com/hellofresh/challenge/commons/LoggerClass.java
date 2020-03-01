@@ -18,7 +18,7 @@ public class LoggerClass extends Reporter {
     log(LOG_ERROR + message, 1, true);
   }
 
-  public static void logSuccess(String message) {
+  static void logSuccess(String message) {
     log(LOG_SUCCESS + message, 2, true);
   }
 
@@ -34,11 +34,12 @@ public class LoggerClass extends Reporter {
     log(message, level, true);
   }
 
-  private static void logShortMessage(Exception e) {
+  static String logShortMessage(Exception e) {
     String msg = ((e.getMessage() != null) && e.getMessage().contains(NEW_LINE)) ?
         e.getMessage().split(NEW_LINE)[0] :
         e.getMessage();
     LoggerClass.log(REASON + msg);
+    return msg;
   }
 
 }

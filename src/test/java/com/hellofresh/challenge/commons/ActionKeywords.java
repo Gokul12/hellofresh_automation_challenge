@@ -1,18 +1,27 @@
 package com.hellofresh.challenge.commons;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.util.Properties;
 import java.util.function.Function;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import static com.hellofresh.challenge.constants.Constant.EMPTY_STRING;
 import static com.hellofresh.challenge.constants.Constant.NEW_LINE;
+import static com.hellofresh.challenge.constants.Constant.PNG_EXTENSION;
+import static com.hellofresh.challenge.constants.Constant.SCREENSHOT_BASE_PATH;
 
 public class ActionKeywords {
   private RemoteWebDriver driver;
@@ -73,7 +82,7 @@ public class ActionKeywords {
 
   public boolean clickIfPresent(String locatorKey) {
     boolean status = false;
-    WebElement element;
+    WebElement element = null;
     try {
       element = fluentWait(locatorKey, null, true);
       if (element != null) {
@@ -82,7 +91,12 @@ public class ActionKeywords {
         status = true;
       }
     } catch (Exception e) {
-      LoggerClass.logError("Click action failed on " + locatorKey, e);
+      if (e.getMessage().contains("is obscured") || LoggerClass.logShortMessage(e)
+          .contains("is not clickable")) {
+        element.sendKeys(Keys.RETURN);
+      } else {
+        LoggerClass.log("Click action failed on " + locatorKey);
+      }
     }
     return status;
   }
@@ -154,6 +168,9 @@ public class ActionKeywords {
       element = fluentWaitWithCustomTime(locatorKey, null, 5, false);
       if (element != null) {
         status = element.isDisplayed();
+        LoggerClass.logSuccess("AssertSuccess! Locator: " + locatorKey + " is displayed");
+      } else {
+        LoggerClass.logError("AssertFailed! Locator: " + locatorKey + " is not displayed");
       }
     } catch (Exception e) {
       LoggerClass.logError("AssertFailed! Locator: " + locatorKey + " is not displayed", e);
@@ -174,6 +191,10 @@ public class ActionKeywords {
               "AssertSuccess! Actual result: " + actualResult + " contains Expected result: "
                   + expectedResult);
           status = true;
+        } else {
+          LoggerClass.logError(
+              "AssertFailed! Actual result: " + actualResult + " did not contain Expected result: "
+                  + expectedResult);
         }
       }
     } catch (Exception e) {
@@ -210,12 +231,26 @@ public class ActionKeywords {
     return true;
   }
 
+  public boolean takeScreenshot(String fileName) {
+    boolean status = false;
+    try {
+      TakesScreenshot takesScreenshot;
+      String filePath = SCREENSHOT_BASE_PATH + fileName + PNG_EXTENSION;
+      takesScreenshot = driver;
+      File file = takesScreenshot.getScreenshotAs(OutputType.FILE);
+      Files.copy(file.toPath(), new File(filePath).toPath());
+      status = true;
+    } catch (Exception e) {
+      LoggerClass.logError("Failed to capture screenshot", e);
+    }
+    return status;
+  }
+
   private WebElement fluentWait(final String locatorKey, final String data,
       boolean isVisibilityRequired) {
     return fluentWaitWithCustomTime(locatorKey, data, 10, isVisibilityRequired);
   }
 
-  @SuppressWarnings("Since15")
   private WebElement fluentWaitWithCustomTime(final String locatorKey, final String data,
       final int seconds, final boolean isVisibilityRequired) {
     LoggerClass.log("In fluentWait method to get value for pageElement " + locatorKey, 5);

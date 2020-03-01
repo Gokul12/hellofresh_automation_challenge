@@ -16,13 +16,20 @@ import com.hellofresh.challenge.utils.Util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.Properties;
+import java.util.stream.Stream;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.BeforeSuite;
 import static com.hellofresh.challenge.constants.Constant.ENV_PROP_FILE_PATH;
 import static com.hellofresh.challenge.constants.Constant.LOCATORS_FILE_PATH;
 import static com.hellofresh.challenge.constants.Constant.REPORT_TEMPLATE_FILE_PATH;
+import static com.hellofresh.challenge.constants.Constant.SCREENSHOT_BASE_PATH;
 import static com.hellofresh.challenge.constants.Constant.URL;
 
 public abstract class BaseTest {
@@ -45,6 +52,8 @@ public abstract class BaseTest {
     initReport();
     initEnvProps();
     initLocators();
+    deleteScreenshots();
+    mkScreenshotdir();
   }
 
   RemoteWebDriver getBrowser() {
@@ -80,6 +89,24 @@ public abstract class BaseTest {
 
   private void initLocators() {
     locators = Util.getProperties(LOCATORS_FILE_PATH);
+  }
+
+  private void deleteScreenshots() {
+    Path rootPath = Paths.get(SCREENSHOT_BASE_PATH);
+    try (Stream<Path> walk = Files.walk(rootPath)) {
+      walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+    } catch (Exception e) {
+      LoggerClass.logError("Exception in delete screenshots", e);
+    }
+  }
+
+  private void mkScreenshotdir() {
+    Path rootPath = Paths.get(SCREENSHOT_BASE_PATH);
+    try {
+      Files.createDirectories(rootPath);
+    } catch (IOException e) {
+      LoggerClass.logError("IOException in create screenshot directory", e);
+    }
   }
 }
 

@@ -10,4 +10,4 @@ buildNumber.properties
 .idea/
 *.iml
 src/test/resources/testReports.html
-
+src/test/resources/screenshots

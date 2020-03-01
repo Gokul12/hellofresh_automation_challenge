@@ -16,9 +16,12 @@ import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 import org.testng.xml.XmlSuite;
 import static com.hellofresh.challenge.constants.Constant.BROWSER;
+import static com.hellofresh.challenge.constants.Constant.EMPTY_STRING;
 import static com.hellofresh.challenge.constants.Constant.ENVIRONMENT;
 import static com.hellofresh.challenge.constants.Constant.IS_PARALLEL;
 import static com.hellofresh.challenge.constants.Constant.PLATFORM;
+import static com.hellofresh.challenge.constants.Constant.PNG_EXTENSION;
+import static com.hellofresh.challenge.constants.Constant.SCREENSHOT_BASE_PATH;
 
 public class TestListener extends TestListenerAdapter
     implements ITestListener, IAlterSuiteListener {
@@ -43,30 +46,35 @@ public class TestListener extends TestListenerAdapter
   @Override
   public void alter(List<XmlSuite> suites) {
     for (XmlSuite suite : suites) {
-      boolean isParallel = Boolean.valueOf(System.getProperty(IS_PARALLEL));
-      if (isParallel) {
-        suite.setParallel(XmlSuite.ParallelMode.METHODS);
-        suite.setThreadCount(5);
+      boolean isParallel;
+      if (EMPTY_STRING.equals(System.getProperty(IS_PARALLEL))) {
+        isParallel = Boolean.valueOf(suite.getParameter(IS_PARALLEL));
+      } else {
+        isParallel = Boolean.valueOf(System.getProperty(IS_PARALLEL));
       }
       String browser = System.getProperty(BROWSER);
       String platform = System.getProperty(PLATFORM);
       String environment = System.getProperty(ENVIRONMENT);
-      if (browser == null) {
+      if (EMPTY_STRING.equals(browser)) {
         SUITE_PROPERTIES.setBrowser(suite.getParameter(BROWSER));
       } else {
         SUITE_PROPERTIES.setBrowser(browser);
       }
-      if (platform == null) {
+      if (EMPTY_STRING.equals(platform)) {
         SUITE_PROPERTIES.setPlatform(suite.getParameter(PLATFORM));
       } else {
         SUITE_PROPERTIES.setPlatform(platform);
       }
-      if (environment == null) {
+      if (EMPTY_STRING.equals(environment)) {
         SUITE_PROPERTIES.setEnvironment(suite.getParameter(ENVIRONMENT));
       } else {
         SUITE_PROPERTIES.setEnvironment(environment);
       }
       SUITE_PROPERTIES.setIsParallel(isParallel);
+      if (isParallel) {
+        suite.setParallel(XmlSuite.ParallelMode.METHODS);
+        suite.setThreadCount(5);
+      }
     }
   }
 
@@ -83,6 +91,9 @@ public class TestListener extends TestListenerAdapter
       tR.setStatus(TestStatus.valueOf(4).name());
     } else {
       tR.setStatus(TestStatus.valueOf(tr.getStatus()).name());
+    }
+    if (TestStatus.FAIL.name().equalsIgnoreCase(tR.getStatus())) {
+      tR.setScreenshotLocation(SCREENSHOT_BASE_PATH + tr.getName() + PNG_EXTENSION);
     }
     BaseTest bT = (BaseTest) tr.getInstance();
     Report report = bT.getReport();
