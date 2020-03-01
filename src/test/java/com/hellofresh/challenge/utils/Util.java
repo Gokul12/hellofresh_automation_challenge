@@ -1,5 +1,6 @@
 package com.hellofresh.challenge.utils;
 
+import com.hellofresh.challenge.commons.LoggerClass;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,8 +17,7 @@ public final class Util {
       properties = new Properties();
       properties.load(input);
     } catch (IOException ex) {
-      //TODO add logger
-      ex.printStackTrace();
+      LoggerClass.logError("IOException while reading from path: " + propertyPath + ex);
     }
     return properties;
   }

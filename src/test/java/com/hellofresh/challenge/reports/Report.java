@@ -1,6 +1,8 @@
 package com.hellofresh.challenge.reports;
 
 import com.hellofresh.challenge.commons.LoggerClass;
+import com.hellofresh.challenge.commons.TestListener;
+import com.hellofresh.challenge.config.SuiteProperties;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +28,7 @@ public abstract class Report {
   private int passCount;
   private int failCount;
   private int skipCount;
+  private SuiteProperties suiteProperties = TestListener.SUITE_PROPERTIES;
   //TODO
   private int passInRerun;
   private long totalDurationInSeconds;
@@ -42,14 +45,13 @@ public abstract class Report {
 
     try {
 
-      String browser = "chrome";
-      String environment = "prod";
-      String suiteName = "sanity";
+      String browser = suiteProperties.getBrowser();
+      String environment = suiteProperties.getEnvironment();
 
       commonAttrs = new HashMap<>();
       totalDurationInSeconds = 0;
       commonAttrs.put("OS Version", System.getProperty("os.name"));
-      commonAttrs.put("SUITE NAME", suiteName);
+      commonAttrs.put("SUITE NAME", "Sanity");
       commonAttrs.put("PASS COUNT", "0");
       commonAttrs.put("FAIL COUNT", "0");
       commonAttrs.put("PASS WITH WARNINGS COUNT", "0");
@@ -57,7 +59,7 @@ public abstract class Report {
       commonAttrs.put("PASS IN RERUN COUNT", "0");
       commonAttrs.put("SKIP COUNT", "0");
       commonAttrs.put("TOTAL COUNT", "0");
-      commonAttrs.put("DURATION", "0");
+      commonAttrs.put("DURATION_IN_MINS", "0");
       commonAttrs.put("ENVIRONMENT", environment);
       commonAttrs.put("BROWSER", browser);
       //TODO get chrome version
@@ -164,8 +166,8 @@ public abstract class Report {
     totalDurationInSeconds = (System.currentTimeMillis() - startTime) / 1000;
     String totalTime =
         String.valueOf(totalDurationInSeconds / 60) + ":" + totalDurationInSeconds % 60;
-    updateSummaryItem("DURATION", totalTime);
-    commonAttrs.put("DURATION", totalTime);
+    updateSummaryItem("DURATION_IN_MINS", totalTime);
+    commonAttrs.put("DURATION_IN_MINS", totalTime);
   }
 
   private Transformer initTransformer() {

@@ -1,5 +1,6 @@
 package com.hellofresh.challenge.commons;
 
+import com.hellofresh.challenge.config.SuiteProperties;
 import com.hellofresh.challenge.reports.Report;
 import com.hellofresh.challenge.reports.TestResult;
 import com.hellofresh.challenge.reports.TestStatus;
@@ -13,9 +14,16 @@ import org.testng.IAlterSuiteListener;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
+import org.testng.xml.XmlSuite;
+import static com.hellofresh.challenge.constants.Constant.BROWSER;
+import static com.hellofresh.challenge.constants.Constant.ENVIRONMENT;
+import static com.hellofresh.challenge.constants.Constant.IS_PARALLEL;
+import static com.hellofresh.challenge.constants.Constant.PLATFORM;
 
 public class TestListener extends TestListenerAdapter
     implements ITestListener, IAlterSuiteListener {
+
+  public static final SuiteProperties SUITE_PROPERTIES = new SuiteProperties();
 
   @Override
   public void onTestSuccess(ITestResult tr) {
@@ -30,6 +38,36 @@ public class TestListener extends TestListenerAdapter
   @Override
   public void onTestSkipped(ITestResult tr) {
     generateTestResult(tr);
+  }
+
+  @Override
+  public void alter(List<XmlSuite> suites) {
+    for (XmlSuite suite : suites) {
+      boolean isParallel = Boolean.valueOf(System.getProperty(IS_PARALLEL));
+      if (isParallel) {
+        suite.setParallel(XmlSuite.ParallelMode.METHODS);
+        suite.setThreadCount(5);
+      }
+      String browser = System.getProperty(BROWSER);
+      String platform = System.getProperty(PLATFORM);
+      String environment = System.getProperty(ENVIRONMENT);
+      if (browser == null) {
+        SUITE_PROPERTIES.setBrowser(suite.getParameter(BROWSER));
+      } else {
+        SUITE_PROPERTIES.setBrowser(browser);
+      }
+      if (platform == null) {
+        SUITE_PROPERTIES.setPlatform(suite.getParameter(PLATFORM));
+      } else {
+        SUITE_PROPERTIES.setPlatform(platform);
+      }
+      if (environment == null) {
+        SUITE_PROPERTIES.setEnvironment(suite.getParameter(ENVIRONMENT));
+      } else {
+        SUITE_PROPERTIES.setEnvironment(environment);
+      }
+      SUITE_PROPERTIES.setIsParallel(isParallel);
+    }
   }
 
   private void generateTestResult(ITestResult tr) {

@@ -30,6 +30,10 @@ public class LoggerClass extends Reporter {
     log(message, 4, true);
   }
 
+  public static void log(String message, int level) {
+    log(message, level, true);
+  }
+
   private static void logShortMessage(Exception e) {
     String msg = ((e.getMessage() != null) && e.getMessage().contains(NEW_LINE)) ?
         e.getMessage().split(NEW_LINE)[0] :

@@ -1,125 +1,106 @@
 package com.hellofresh.challenge.testscripts;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import com.hellofresh.challenge.commons.TestHelper;
 import java.util.Date;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 
-public class WebTest extends BaseTest{
-  WebDriver driver;
-  WebDriverWait wait;
-
+public class WebTest extends BaseTest {
   String existingUserEmail = "hf_challenge_123456@hf123456.com";
   String existingUserPassword = "12345678";
 
-  @BeforeMethod
-  public void setUp() {
-    System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver");
-    driver = new ChromeDriver();
-    wait = new WebDriverWait(driver, 10, 50);
-    driver.get("http://automationpractice.com/index.php");
-  }
-
   @Test
   public void signInTest() {
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("login"))).click();
+    TestHelper th = getTestObject();
     String timestamp = String.valueOf(new Date().getTime());
     String email = "hf_challenge_" + timestamp + "@hf" + timestamp.substring(7) + ".com";
     String name = "Firstname";
     String surname = "Lastname";
-    driver.findElement(By.id("email_create")).sendKeys(email);
-    driver.findElement(By.id("SubmitCreate")).click();
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("id_gender2"))).click();
-    driver.findElement(By.id("customer_firstname")).sendKeys(name);
-    driver.findElement(By.id("customer_lastname")).sendKeys(surname);
-    driver.findElement(By.id("passwd")).sendKeys("Qwerty");
-    Select select = new Select(driver.findElement(By.id("days")));
-    select.selectByValue("1");
-    select = new Select(driver.findElement(By.id("months")));
-    select.selectByValue("1");
-    select = new Select(driver.findElement(By.id("years")));
-    select.selectByValue("2000");
-    driver.findElement(By.id("company")).sendKeys("Company");
-    driver.findElement(By.id("address1")).sendKeys("Qwerty, 123");
-    driver.findElement(By.id("address2")).sendKeys("zxcvb");
-    driver.findElement(By.id("city")).sendKeys("Qwerty");
-    select = new Select(driver.findElement(By.id("id_state")));
-    select.selectByVisibleText("Colorado");
-    driver.findElement(By.id("postcode")).sendKeys("12345");
-    driver.findElement(By.id("other")).sendKeys("Qwerty");
-    driver.findElement(By.id("phone")).sendKeys("12345123123");
-    driver.findElement(By.id("phone_mobile")).sendKeys("12345123123");
-    driver.findElement(By.id("alias")).sendKeys("hf");
-    driver.findElement(By.id("submitAccount")).click();
-    WebElement heading =
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("h1")));
+    th.getActions().click("Login");
+    th.getActions().type("EmailAddress", email);
+    th.getActions().click("CreateAccount");
+    th.getActions().click("Gender");
+    th.getActions().type("FirstName", name);
+    th.getActions().type("LastName", surname);
+    th.getActions().type("AccountPasswd", "Qwerty");
+    th.getActions().selectByValue("Days", "1");
+    th.getActions().selectByValue("Months", "1");
+    th.getActions().selectByValue("Years", "2000");
+    th.getActions().type("Company", "Company");
+    th.getActions().type("Address1", "Qwerty, 123");
+    th.getActions().type("Address2", "zxcvb");
+    th.getActions().type("City", "Qwerty");
+    th.getActions().selectByVisibleText("State", "Colorado");
+    th.getActions().type("PostCode", "12345");
+    th.getActions().type("Other", "Qwerty");
+    th.getActions().type("Phone", "12345123123");
+    th.getActions().type("PhoneMobile", "12345123123");
+    th.getActions().type("Alias", "hf");
+    th.getActions().click("SubmitAccount");
 
-    assertEquals(heading.getText(), "MY ACCOUNT");
-    assertEquals(driver.findElement(By.className("account")).getText(), name + " " + surname);
-    assertTrue(driver.findElement(By.className("info-account")).getText()
-        .contains("Welcome to your account."));
-    assertTrue(driver.findElement(By.className("logout")).isDisplayed());
-    assertTrue(driver.getCurrentUrl().contains("controller=my-account"));
+    assertSignIn(th, name + " " + surname);
+    tearDown(th);
   }
 
   @Test
   public void logInTest() {
+    TestHelper th = getTestObject();
     String fullName = "Joe Black";
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("login"))).click();
-    driver.findElement(By.id("email")).sendKeys(existingUserEmail);
-    driver.findElement(By.id("passwd")).sendKeys(existingUserPassword);
-    driver.findElement(By.id("SubmitLogin")).click();
-    WebElement heading =
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("h1")));
-
-    assertEquals("MY ACCOUNT", heading.getText());
-    assertEquals(fullName, driver.findElement(By.className("account")).getText());
-    assertTrue(driver.findElement(By.className("info-account")).getText()
-        .contains("Welcome to your account."));
-    assertTrue(driver.findElement(By.className("logout")).isDisplayed());
-    assertTrue(driver.getCurrentUrl().contains("controller=my-account"));
+    signIn(th);
+    assertSignIn(th, fullName);
+    tearDown(th);
   }
 
   @Test
   public void checkoutTest() {
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("login"))).click();
-    driver.findElement(By.id("email")).sendKeys(existingUserEmail);
-    driver.findElement(By.id("passwd")).sendKeys(existingUserPassword);
-    driver.findElement(By.id("SubmitLogin")).click();
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Women"))).click();
-    driver.findElement(By.xpath("//a[@title='Faded Short Sleeve T-shirts']/ancestor::li")).click();
-    driver.findElement(By.xpath("//a[@title='Faded Short Sleeve T-shirts']/ancestor::li")).click();
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("Submit"))).click();
-    wait.until(ExpectedConditions.visibilityOfElementLocated(
-        By.xpath("/[@id='layer_cart']//a[@class and @title='Proceed to checkout']"))).click();
-    wait.until(ExpectedConditions.visibilityOfElementLocated(
-        By.xpath("/[contains(@class,'cart_navigation')]/a[@title='Proceed to checkout']")))
-        .click();
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("processAddress"))).click();
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("uniform-cgv"))).click();
-    driver.findElement(By.name("processCarrier")).click();
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("bankwire"))).click();
-    wait.until(ExpectedConditions
-        .visibilityOfElementLocated(By.xpath("/[@id='cart_navigation']/button"))).click();
-    WebElement heading =
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("h1")));
+    TestHelper th = getTestObject();
+    signIn(th);
+    th.getActions().click("Women");
+    th.getActions().click("DressName", "Faded Short Sleeve T-shirts");
+    th.getActions().click("DressName", "Faded Short Sleeve T-shirts");
+    th.getActions().clickIfPresent("Submit");
+    th.getActions().clickIfPresent("LayerCart");
+    th.getActions().click("CartNavigationCheckout");
+    th.getActions().click("ProcessAddress");
+    th.getActions().click("UniformCGV");
+    th.getActions().click("ProcessCarrier");
+    th.getActions().click("BankWire");
+    th.getActions().click("CartNavigation");
 
-    assertEquals("ORDER CONFIRMATION", heading.getText());
+    assertHeader(th, "ORDER CONFIRMATION");
+    assertTrue(th.getActions().isDisplayed("Shipping"));
+    assertTrue(th.getActions().isDisplayed("Payment"));
     assertTrue(
-        driver.findElement(By.xpath("//li[@class='step_done step_done_last four']")).isDisplayed());
-    assertTrue(driver.findElement(By.xpath("//li[@id='step_end' and @class='step_current last']"))
-        .isDisplayed());
-    assertTrue(driver.findElement(By.xpath("/[@class='cheque-indent']/strong")).getText()
-        .contains("Your order on My Store is complete."));
-    assertTrue(driver.getCurrentUrl().contains("controller=order-confirmation"));
+        th.getActions().assertContains("OrderComplete", "Your order on My Store is complete."));
+    assertTrue(assertURL(th, "controller=order-confirmation"));
+    tearDown(th);
+  }
+
+  private void signIn(TestHelper th) {
+    th.getActions().click("Login");
+    th.getActions().type("Email", existingUserEmail);
+    th.getActions().type("AccountPasswd", existingUserPassword);
+    th.getActions().click("SubmitLogin");
+  }
+
+  private void assertSignIn(TestHelper th, String name) {
+    assertHeader(th, "MY ACCOUNT");
+    th.getActions().assertEquals("Account", name);
+    assertTrue(th.getActions().assertContains("AccountInfo", "Welcome to your account."));
+    assertTrue(th.getActions().isDisplayed("Logout"));
+    assertTrue(assertURL(th, "controller=my-account"));
+  }
+
+  private void assertHeader(TestHelper th, String header) {
+    th.getActions().assertEquals("RegisterHeading", header);
+  }
+
+  private boolean assertURL(TestHelper th, String url) {
+    return th.getActions().assertContains(th.getDriver(), url);
+  }
+
+  private void tearDown(TestHelper th) {
+    th.getActions().quitDriver(th.getDriver());
   }
 }
