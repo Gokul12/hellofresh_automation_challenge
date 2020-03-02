@@ -7,7 +7,6 @@ import com.google.gson.JsonParser;
 import com.hellofresh.challenge.commons.LoggerClass;
 import com.hellofresh.challenge.enums.Suite;
 import com.hellofresh.challenge.testscripts.BaseTest;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.Method;

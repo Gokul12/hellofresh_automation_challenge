@@ -4,7 +4,6 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.hellofresh.challenge.commons.APIActionKeywords;
 import com.hellofresh.challenge.commons.LoggerClass;
 import com.hellofresh.challenge.utils.TestDataGenerator;
-import com.hellofresh.challenge.utils.Util;
 import com.mashape.unirest.http.HttpResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
