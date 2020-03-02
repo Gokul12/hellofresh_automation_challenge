@@ -1,5 +1,6 @@
 package com.hellofresh.challenge.commons;
 
+import com.google.common.base.CaseFormat;
 import com.hellofresh.challenge.config.SuiteProperties;
 import com.hellofresh.challenge.reports.Report;
 import com.hellofresh.challenge.reports.TestResult;
@@ -43,11 +44,17 @@ public class TestListener extends TestListenerAdapter
     generateTestResult(tr);
   }
 
+  /**
+   * Alter testng suite xml file for parallel run
+   *
+   * @param suites
+   */
   @Override
   public void alter(List<XmlSuite> suites) {
     for (XmlSuite suite : suites) {
       boolean isParallel;
-      if (EMPTY_STRING.equals(System.getProperty(IS_PARALLEL))) {
+      if (EMPTY_STRING.equals(System.getProperty(IS_PARALLEL)) || null == System
+          .getProperty(IS_PARALLEL)) {
         isParallel = Boolean.valueOf(suite.getParameter(IS_PARALLEL));
       } else {
         isParallel = Boolean.valueOf(System.getProperty(IS_PARALLEL));
@@ -55,23 +62,23 @@ public class TestListener extends TestListenerAdapter
       String browser = System.getProperty(BROWSER);
       String platform = System.getProperty(PLATFORM);
       String environment = System.getProperty(ENVIRONMENT);
-      if (EMPTY_STRING.equals(browser)) {
+      if (EMPTY_STRING.equals(browser) || null == browser) {
         SUITE_PROPERTIES.setBrowser(suite.getParameter(BROWSER));
       } else {
         SUITE_PROPERTIES.setBrowser(browser);
       }
-      if (EMPTY_STRING.equals(platform)) {
+      if (EMPTY_STRING.equals(platform) || null == platform) {
         SUITE_PROPERTIES.setPlatform(suite.getParameter(PLATFORM));
       } else {
         SUITE_PROPERTIES.setPlatform(platform);
       }
-      if (EMPTY_STRING.equals(environment)) {
+      if (EMPTY_STRING.equals(environment) || null == environment) {
         SUITE_PROPERTIES.setEnvironment(suite.getParameter(ENVIRONMENT));
       } else {
         SUITE_PROPERTIES.setEnvironment(environment);
       }
       SUITE_PROPERTIES.setIsParallel(isParallel);
-      if (isParallel) {
+      if (isParallel && !SUITE_PROPERTIES.getBrowser().equalsIgnoreCase("NA")) {
         suite.setParallel(XmlSuite.ParallelMode.METHODS);
         suite.setThreadCount(5);
       }
@@ -79,7 +86,8 @@ public class TestListener extends TestListenerAdapter
   }
 
   private void generateTestResult(ITestResult tr) {
-    TestResult tR = new TestResult(tr.getName().toUpperCase());
+    String testName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, tr.getName());
+    TestResult tR = new TestResult(testName.toUpperCase());
     long totalDuration = (tr.getEndMillis() - tr.getStartMillis());
     List<String> logs = new ArrayList<>();
     logs.addAll(LoggerClass.getOutput(tr));
@@ -94,6 +102,9 @@ public class TestListener extends TestListenerAdapter
     }
     if (TestStatus.FAIL.name().equalsIgnoreCase(tR.getStatus())) {
       tR.setScreenshotLocation(SCREENSHOT_BASE_PATH + tr.getName() + PNG_EXTENSION);
+    }
+    if (tr.getParameters() != null && tr.getParameters().length > 0) {
+      tR.setTestData(tr.getParameters()[0].toString());
     }
     BaseTest bT = (BaseTest) tr.getInstance();
     Report report = bT.getReport();

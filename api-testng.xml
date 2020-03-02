@@ -3,16 +3,14 @@
 <suite name="HelloFreshChallenge" verbose="4" allow-return-values="true">
   <parameter name="environment" value="prod"/>
   <parameter name="platform" value="mac"/>
-  <parameter name="browser" value="chrome"/>
-  <parameter name="is_parallel" value="true"/>
-
+  <parameter name="browser" value="NA"/>
+  <parameter name="is_parallel" value="false"/>
   <listeners>
     <listener class-name="com.hellofresh.challenge.commons.TestListener"/>
   </listeners>
-
-  <test name="Web">
+  <test name="Api">
     <classes>
-      <class name="com.hellofresh.challenge.testscripts.WebTest"/>
+      <class name="com.hellofresh.challenge.testscripts.api.APITest"/>
     </classes>
   </test>
 </suite>

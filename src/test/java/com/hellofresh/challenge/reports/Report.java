@@ -3,6 +3,7 @@ package com.hellofresh.challenge.reports;
 import com.hellofresh.challenge.commons.LoggerClass;
 import com.hellofresh.challenge.commons.TestListener;
 import com.hellofresh.challenge.config.SuiteProperties;
+import com.hellofresh.challenge.enums.Suite;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,7 @@ public abstract class Report {
   Document doc;
   DocumentBuilder docBuilder;
 
-  Report(String templateFile) {
+  Report(String templateFile, String platform) {
     this.templateFile = templateFile;
     try {
       SuiteProperties suiteProperties = TestListener.SUITE_PROPERTIES;
@@ -54,7 +55,12 @@ public abstract class Report {
       commonAttrs.put("TOTAL COUNT", "0");
       commonAttrs.put("DURATION_IN_MINS", "0");
       commonAttrs.put("ENVIRONMENT", environment);
-      commonAttrs.put("BROWSER", browser);
+      if (platform.equalsIgnoreCase(Suite.WEB.name())) {
+        commonAttrs.put("BROWSER", browser);
+      } else {
+        commonAttrs.put("BROWSER", "NA");
+      }
+      commonAttrs.put("PLATFORM", platform);
       startTime = System.currentTimeMillis();
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       docBuilder = dbf.newDocumentBuilder();

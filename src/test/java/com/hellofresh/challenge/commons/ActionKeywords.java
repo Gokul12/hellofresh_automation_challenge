@@ -9,11 +9,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
@@ -38,6 +36,7 @@ public class ActionKeywords {
     try {
       element = fluentWait(locatorKey, data, false);
       if (null != element) {
+        element.clear();
         element.sendKeys(data);
         LoggerClass.log("Typed " + data + " on " + locatorKey);
         status = true;
@@ -95,8 +94,45 @@ public class ActionKeywords {
           .contains("is not clickable")) {
         element.sendKeys(Keys.RETURN);
       } else {
-        LoggerClass.log("Click action failed on " + locatorKey);
+        LoggerClass.logError("Click action failed on " + locatorKey, e);
       }
+    }
+    return status;
+  }
+
+  public boolean clickIfPresent(String locatorKey, String data) {
+    boolean status = false;
+    WebElement element = null;
+    try {
+      element = fluentWait(locatorKey, data, true);
+      if (element != null) {
+        element.click();
+        LoggerClass.log("Clicked" + " on " + locatorKey);
+        status = true;
+      }
+    } catch (Exception e) {
+      if (e.getMessage().contains("is obscured") || LoggerClass.logShortMessage(e)
+          .contains("is not clickable")) {
+        element.sendKeys(Keys.RETURN);
+      } else {
+        LoggerClass.logError("Click action failed on " + locatorKey, e);
+      }
+    }
+    return status;
+  }
+
+  public boolean clickIfPresent(String locatorKey, int waitTime) {
+    boolean status = false;
+    WebElement element = null;
+    try {
+      element = fluentWaitWithCustomTime(locatorKey, null, waitTime, true);
+      if (element != null) {
+        element.click();
+        LoggerClass.log("Clicked" + " on " + locatorKey);
+        status = true;
+      }
+    } catch (Exception e) {
+      LoggerClass.logError("Click action failed on " + locatorKey, e);
     }
     return status;
   }
@@ -104,7 +140,7 @@ public class ActionKeywords {
 
   public boolean selectByValue(String locatorKey, String data) {
     boolean status = false;
-    WebElement element;
+    WebElement element = null;
     try {
       element = fluentWait(locatorKey, EMPTY_STRING, false);
       if (element != null) {
@@ -114,7 +150,7 @@ public class ActionKeywords {
         status = true;
       }
     } catch (Exception e) {
-      LoggerClass.logError("Failed to select the element," + locatorKey + " by value", e);
+      LoggerClass.log("Failed to select the element," + locatorKey + " by value");
       LoggerClass.log("Reason: " + e.getMessage().split(NEW_LINE)[0]);
     }
     return status;
@@ -241,7 +277,7 @@ public class ActionKeywords {
       Files.copy(file.toPath(), new File(filePath).toPath());
       status = true;
     } catch (Exception e) {
-      LoggerClass.logError("Failed to capture screenshot", e);
+      LoggerClass.log("Failed to capture screenshot");
     }
     return status;
   }
@@ -285,8 +321,8 @@ public class ActionKeywords {
         }
       });
     } catch (TimeoutException te) {
-      LoggerClass.logError("The element, " + locatorKey + "[" + id + "], is not found in the page, "
-          + ". Timed out after " + seconds + " seconds", te);
+      LoggerClass.log("The element, " + locatorKey + "[" + id + "], is not found in the page, "
+          + ". Timed out after " + seconds + " seconds", 5, te);
     } catch (Exception ex) {
       LoggerClass.logError("Unexpected Exception", ex);
     }

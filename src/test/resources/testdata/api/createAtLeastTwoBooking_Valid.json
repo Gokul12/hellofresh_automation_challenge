@@ -1,0 +1,67 @@
+{
+  "dataSet": [
+    {
+      "baseURL": "https://automationintesting.online/booking",
+      "endPoint": "/",
+      "requestType": "GET",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "uriParams": {
+        "roomId": 1001
+      },
+      "bodyParams": {
+        "bodyType": "raw",
+        "params": {
+          "bookingdates": {
+            "checkin": "2020-03-10T21:06:24.268Z",
+            "checkout": "2020-03-29T21:06:24.268Z"
+          },
+          "depositpaid": true,
+          "email": "email1@test.com",
+          "firstname": "gokul",
+          "lastname": "hellofresh",
+          "phone": "+91 1234567890",
+          "roomid": 1001
+        }
+      },
+      "validations": {
+        "statusCode": "409|201",
+        "schemaValidation": "false",
+        "dataValidation": {}
+      }
+    },
+    {
+      "baseURL": "https://automationintesting.online/booking",
+      "endPoint": "/",
+      "requestType": "GET",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "uriParams": {
+        "roomId": 1001
+      },
+      "bodyParams": {
+        "bodyType": "raw",
+        "params": {
+          "bookingdates": {
+            "checkin": "2020-03-30",
+            "checkout": "2020-04-29"
+          },
+          "depositpaid": false,
+          "email": "email2@test.com",
+          "firstname": "Gokul12",
+          "lastname": "Hellofresh12",
+          "phone": "+91 1234567890",
+          "roomid": 1001
+        }
+      },
+      "validations": {
+        "statusCode": "409|201",
+        "schemaValidation": "false",
+        "dataValidation": {}
+      }
+    }
+  ]
+}
+

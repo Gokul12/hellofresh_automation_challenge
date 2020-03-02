@@ -15,8 +15,8 @@ import javax.xml.xpath.XPathFactory;
 
 public class WebReport extends Report {
 
-  public WebReport(String templateFile) {
-    super(templateFile);
+  public WebReport(String templateFile, String platform) {
+    super(templateFile, platform);
     generateSummary();
   }
 
@@ -137,21 +137,10 @@ public class WebReport extends Report {
   }
 
 
-  private Node addTestData(Map<String, String> testData) {
+  private Node addTestData(String testdata) {
     Element tdNode = doc.createElement("td");
-    String textContent = "";
-    if (testData != null) {
-      for (Map.Entry<String, String> entry : testData.entrySet()) {
-        try {
-          textContent = textContent + entry.getKey() + ":" + entry.getValue() + "\n\n";
-          if (textContent.equals("sampleKey:sampleValue\n\n")) {
-            textContent = " ";
-          }
-        } catch (ClassCastException e) {
-          textContent = textContent + entry.getKey() + ":" + entry.getValue() + "\n\n";
-        }
-        tdNode.setTextContent(textContent);
-      }
+    if (testdata != null) {
+      tdNode.setTextContent(testdata);
     }
     return tdNode;
   }

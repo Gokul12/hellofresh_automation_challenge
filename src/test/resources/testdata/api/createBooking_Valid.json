@@ -1,0 +1,34 @@
+{
+  "dataSet": [
+    {
+      "baseURL": "https://automationintesting.online/booking",
+      "endPoint": "/",
+      "requestType": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "uriParams": {},
+      "bodyParams": {
+        "bodyType": "raw",
+        "params": {
+          "bookingdates": {
+            "checkin": "2020-03-10",
+            "checkout": "2020-03-29"
+          },
+          "depositpaid": true,
+          "email": "email@test.com",
+          "firstname": "gokul",
+          "lastname": "hellofresh",
+          "phone": "+91 1234567890",
+          "roomid": 5
+        }
+      },
+      "validations": {
+        "statusCode": "201",
+        "schemaValidation": "false",
+        "dataValidation": {}
+      }
+    }
+  ]
+}
+

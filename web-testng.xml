@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="HelloFreshChallenge" verbose="4" allow-return-values="true">
+  <parameter name="environment" value="prod"/>
+  <parameter name="platform" value="mac"/>
+  <parameter name="browser" value="chrome"/>
+  <parameter name="is_parallel" value="true"/>
+  <listeners>
+    <listener class-name="com.hellofresh.challenge.commons.TestListener"/>
+  </listeners>
+  <test name="Web">
+    <classes>
+      <class name="com.hellofresh.challenge.testscripts.web.WebTest"/>
+    </classes>
+  </test>
+</suite>

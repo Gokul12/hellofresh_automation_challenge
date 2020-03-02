@@ -1,0 +1,40 @@
+{
+  "dataSet": [
+    {
+      "baseURL": "https://automationintesting.online/booking",
+      "endPoint": "/",
+      "requestType": "GET",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "uriParams": {},
+      "bodyParams": {
+        "bodyType": "raw",
+        "params": {
+          "bookingdates": {
+            "checkin": "2020-05-10",
+            "checkout": "2020-05-29"
+          },
+          "depositpaid": true,
+          "email": "email@test.com",
+          "firstname": "Gokul",
+          "lastname": "HelloFresh",
+          "phone": "+91 1234567890",
+          "roomid": 2000
+        }
+      },
+      "validations": {
+        "statusCode": "200",
+        "schemaValidation": "false",
+        "dataValidation": {
+          "$.bookingdates.checkin": "2020-05-10",
+          "$.bookingdates.checkout": "2020-05-29",
+          "$.firstname": "Gokul",
+          "$.lastname": "HelloFresh",
+          "$.depositpaid": "true"
+        }
+      }
+    }
+  ]
+}
+

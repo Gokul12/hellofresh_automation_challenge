@@ -1,0 +1,35 @@
+{
+  "dataSet": [
+    {
+      "baseURL": "https://automationintesting.online/booking",
+      "endPoint": "/",
+      "requestType": "GET",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "uriParams": {
+        "roomid": 1001
+      },
+      "bodyParams": {},
+      "validations": {
+        "statusCode": "200",
+        "schemaValidation": "false",
+        "dataValidation": {
+          "$.bookings[0].roomid": "1001",
+          "$.bookings[0].bookingdates.checkin": "2020-03-10",
+          "$.bookings[0].bookingdates.checkout": "2020-03-29",
+          "$.bookings[0].firstname": "gokul",
+          "$.bookings[0].lastname": "hellofresh",
+          "$.bookings[0].depositpaid": "true",
+          "$.bookings[1].roomid": "1001",
+          "$.bookings[1].bookingdates.checkin": "2020-03-30",
+          "$.bookings[1].bookingdates.checkout": "2020-04-29",
+          "$.bookings[1].firstname": "Gokul12",
+          "$.bookings[1].lastname": "Hellofresh12",
+          "$.bookings[1].depositpaid": "false"
+        }
+      }
+    }
+  ]
+}
+

@@ -12,7 +12,7 @@ public class TestResult {
   private long durationInSeconds;
   private final List<String> passedCheckPoints;
   private final List<String> failedCheckPoints;
-  private Map<String, String> testData;
+  private String testData;
   private final List<String> detailedLogs;
   private String resultID;
   private String screenshotLocation;
@@ -65,7 +65,7 @@ public class TestResult {
     return this.status;
   }
 
-  public Map<String, String> gettestData() {
+  public String gettestData() {
     return testData;
   }
 
@@ -110,7 +110,7 @@ public class TestResult {
     this.status = status;
   }
 
-  public void setTestData(Map<String, String> testData) {
+  public void setTestData(String testData) {
     this.testData = testData;
   }
 

@@ -18,7 +18,7 @@ public class LoggerClass extends Reporter {
     log(LOG_ERROR + message, 1, true);
   }
 
-  static void logSuccess(String message) {
+  public static void logSuccess(String message) {
     log(LOG_SUCCESS + message, 2, true);
   }
 
@@ -31,6 +31,10 @@ public class LoggerClass extends Reporter {
   }
 
   public static void log(String message, int level) {
+    log(message, level, true);
+  }
+
+  public static void log(String message, int level, Exception e) {
     log(message, level, true);
   }
 
